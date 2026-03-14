@@ -1,69 +1,443 @@
 <!DOCTYPE html>
-<html>
-
+<html lang="en" data-theme="light">
 <head>
-<meta charset="utf-8">
-<meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Prediction Result | AI Fake News Detector</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
 
-<title>Prediction Result</title>
+    <style>
+        :root {
+            --bg: #f4f8ff;
+            --bg-soft: #eaf1ff;
+            --card: #ffffff;
+            --text: #0f172a;
+            --subtext: #64748b;
+            --nav: rgba(255, 255, 255, 0.96);
+            --border: #dbe4f0;
+            --shadow: 0 14px 35px rgba(15, 23, 42, 0.08);
+            --real1: #16a34a;
+            --real2: #22c55e;
+            --fake1: #dc2626;
+            --fake2: #ef4444;
+            --primary1: #0d6efd;
+            --primary2: #4d8dff;
+            --warn-bg: #fff7db;
+            --warn-border: #f3d98b;
+            --warn-text: #7a5a00;
+            --track: #e9eef5;
+        }
 
-<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+        [data-theme="dark"] {
+            --bg: #0b1220;
+            --bg-soft: #111827;
+            --card: #111827;
+            --text: #f3f4f6;
+            --subtext: #cbd5e1;
+            --nav: rgba(17, 24, 39, 0.96);
+            --border: #273449;
+            --shadow: 0 14px 35px rgba(0, 0, 0, 0.30);
+            --warn-bg: #3a2f12;
+            --warn-border: #6d5310;
+            --warn-text: #f8e7a1;
+            --track: #253246;
+        }
 
-<style>
+        * {
+            box-sizing: border-box;
+        }
 
-body{
-height:100vh;
-display:flex;
-justify-content:center;
-align-items:center;
-background:#f8f9fa;
-margin:0;
-}
+        html, body {
+            margin: 0;
+            min-height: 100%;
+            font-family: Arial, sans-serif;
+            background: linear-gradient(135deg, var(--bg), var(--bg-soft));
+            color: var(--text);
+        }
 
-.result-card{
-width:600px;
-}
+        .navbar-custom {
+            background: var(--nav);
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
+            padding: 12px 0;
+            border-bottom: 1px solid rgba(0, 0, 0, 0.04);
+        }
 
-</style>
+        .brand-logo {
+            width: 40px;
+            height: 40px;
+            object-fit: contain;
+            margin-right: 10px;
+            border-radius: 50%;
+        }
 
+        .brand-text {
+            font-size: 1.15rem;
+            font-weight: 700;
+            color: var(--text);
+        }
+
+        .theme-btn,
+        .nav-btn {
+            border-radius: 12px;
+            padding: 9px 14px;
+            font-weight: 600;
+        }
+
+        .result-section {
+            min-height: calc(100vh - 76px);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 30px 14px;
+        }
+
+        .result-card {
+            width: 100%;
+            max-width: 1080px;
+            background: var(--card);
+            border-radius: 28px;
+            box-shadow: var(--shadow);
+            border: 1px solid var(--border);
+            overflow: hidden;
+        }
+
+        .result-left {
+            padding: 36px 34px;
+            height: 100%;
+        }
+
+        .result-right {
+            padding: 36px 28px;
+            background: linear-gradient(135deg, var(--primary1), var(--primary2));
+            color: white;
+            height: 100%;
+        }
+
+        .eyebrow {
+            display: inline-block;
+            padding: 8px 14px;
+            border-radius: 999px;
+            font-size: 0.88rem;
+            font-weight: 600;
+            background: rgba(13, 110, 253, 0.10);
+            color: var(--primary1);
+            margin-bottom: 16px;
+        }
+
+        .title {
+            font-size: 2.15rem;
+            font-weight: 800;
+            margin-bottom: 10px;
+            line-height: 1.15;
+        }
+
+        .subtitle {
+            color: var(--subtext);
+            font-size: 1rem;
+            line-height: 1.6;
+            margin-bottom: 28px;
+        }
+
+        .status-wrap {
+            display: flex;
+            align-items: center;
+            gap: 14px;
+            flex-wrap: wrap;
+            margin-bottom: 24px;
+        }
+
+        .status-badge {
+            padding: 11px 18px;
+            border-radius: 14px;
+            color: white;
+            font-size: 1rem;
+            font-weight: 700;
+            min-width: 150px;
+            text-align: center;
+        }
+
+        .status-real {
+            background: linear-gradient(135deg, var(--real1), var(--real2));
+        }
+
+        .status-fake {
+            background: linear-gradient(135deg, var(--fake1), var(--fake2));
+        }
+
+        .status-empty {
+            background: linear-gradient(135deg, #6b7280, #9ca3af);
+        }
+
+        .score-chip {
+            background: rgba(13, 110, 253, 0.08);
+            color: var(--text);
+            border: 1px solid var(--border);
+            border-radius: 14px;
+            padding: 10px 14px;
+            font-weight: 600;
+        }
+
+        .section-label {
+            font-size: 1rem;
+            font-weight: 700;
+            margin-bottom: 10px;
+        }
+
+        .progress-shell {
+            width: 100%;
+            height: 16px;
+            background: var(--track);
+            border-radius: 999px;
+            overflow: hidden;
+            margin-bottom: 18px;
+        }
+
+        .progress-fill {
+            height: 100%;
+            border-radius: 999px;
+        }
+
+        .fill-real {
+            background: linear-gradient(90deg, var(--real1), var(--real2));
+        }
+
+        .fill-fake {
+            background: linear-gradient(90deg, var(--fake1), var(--fake2));
+        }
+
+        .fill-empty {
+            background: linear-gradient(90deg, #6b7280, #9ca3af);
+        }
+
+        .message-box {
+            background: var(--warn-bg);
+            border: 1px solid var(--warn-border);
+            color: var(--warn-text);
+            border-radius: 16px;
+            padding: 16px 18px;
+            margin-top: 6px;
+            margin-bottom: 24px;
+            font-size: 1rem;
+            line-height: 1.5;
+        }
+
+        .action-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 12px;
+        }
+
+        .action-grid a {
+            border-radius: 14px;
+            padding: 12px;
+            font-weight: 600;
+        }
+
+        .mini-title {
+            display: inline-block;
+            padding: 8px 14px;
+            border-radius: 999px;
+            font-size: 0.85rem;
+            font-weight: 600;
+            background: rgba(255, 255, 255, 0.16);
+            margin-bottom: 16px;
+        }
+
+        .side-card {
+            background: rgba(255, 255, 255, 0.12);
+            border: 1px solid rgba(255, 255, 255, 0.14);
+            border-radius: 18px;
+            padding: 18px;
+            margin-bottom: 14px;
+        }
+
+        .side-card h5 {
+            margin: 0 0 8px 0;
+            font-size: 1.05rem;
+            font-weight: 700;
+        }
+
+        .side-card p {
+            margin: 0;
+            font-size: 0.95rem;
+            line-height: 1.6;
+        }
+
+        @media (max-width: 991px) {
+            .result-left,
+            .result-right {
+                padding: 26px 22px;
+            }
+
+            .title {
+                font-size: 1.8rem;
+            }
+
+            .action-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        @media (max-width: 575px) {
+            .brand-text {
+                font-size: 1rem;
+            }
+
+            .theme-btn,
+            .nav-btn {
+                padding: 8px 10px;
+                font-size: 0.9rem;
+            }
+
+            .title {
+                font-size: 1.55rem;
+            }
+
+            .subtitle,
+            .message-box,
+            .side-card p {
+                font-size: 0.95rem;
+            }
+        }
+    </style>
 </head>
-
 <body>
 
-<div class="result-card">
+    <nav class="navbar navbar-expand-lg navbar-custom">
+        <div class="container">
+            <a class="navbar-brand d-flex align-items-center m-0" href="/">
+                <img src="https://cdn-icons-png.flaticon.com/512/3135/3135715.png" alt="Logo" class="brand-logo">
+                <span class="brand-text">AI Fake News Detector</span>
+            </a>
 
-<div class="card shadow border-0 p-4 text-center">
+            <div class="d-flex align-items-center gap-2">
+                <button class="btn btn-outline-secondary theme-btn" onclick="toggleTheme()" id="themeButton">Dark Mode</button>
+                <a href="/" class="btn btn-outline-primary nav-btn">Home</a>
+                <a href="/dashboard" class="btn btn-primary nav-btn">Dashboard</a>
+            </div>
+        </div>
+    </nav>
 
-<h2 class="mb-3">Prediction Result</h2>
+    <section class="result-section">
+        <div class="result-card">
+            <div class="row g-0">
+                <div class="col-lg-7">
+                    <div class="result-left">
+                        <div class="eyebrow">Prediction Summary</div>
 
-<span class="badge {% if result.startswith('Fake') %}bg-danger{% else %}bg-success{% endif %} fs-6 px-4 py-2 mb-3">
-{{ result }}
-</span>
+                        <h1 class="title">Analysis Complete</h1>
+                        <p class="subtitle">
+                            The model has analyzed your submitted news content and generated a classification with confidence level.
+                        </p>
 
-<div class="mb-3">
+                        <div class="status-wrap">
+                            <div class="status-badge
+                                {% if prediction == 'Real News' %}
+                                    status-real
+                                {% elif prediction == 'Fake News' %}
+                                    status-fake
+                                {% else %}
+                                    status-empty
+                                {% endif %}
+                            ">
+                                {{ prediction }}
+                            </div>
 
-<div class="d-flex justify-content-between">
-<span>Confidence</span>
-<span>{{ confidence }}%</span>
-</div>
+                            <div class="score-chip">
+                                Confidence: {{ confidence }}%
+                            </div>
+                        </div>
 
-<div class="progress mt-1">
-<div class="progress-bar" style="width:{{ confidence }}%"></div>
-</div>
+                        <div class="section-label">Model Confidence</div>
+                        <div class="progress-shell">
+                            <div
+                                class="progress-fill
+                                    {% if prediction == 'Real News' %}
+                                        fill-real
+                                    {% elif prediction == 'Fake News' %}
+                                        fill-fake
+                                    {% else %}
+                                        fill-empty
+                                    {% endif %}
+                                "
+                                style="width: {{ confidence }}%;"
+                            ></div>
+                        </div>
 
-</div>
+                        <div class="message-box">
+                            {{ warning }}
+                        </div>
 
-{% if warning %}
-<div class="alert alert-warning">
-{{ warning }}
-</div>
-{% endif %}
+                        <div class="action-grid">
+                            <a href="/" class="btn btn-primary">Check Another</a>
+                            <a href="/dashboard" class="btn btn-outline-secondary">View Dashboard</a>
+                            <a href="/login" class="btn btn-outline-primary">Login</a>
+                        </div>
+                    </div>
+                </div>
 
-<a href="/" class="btn btn-primary w-100">Check Another News</a>
+                <div class="col-lg-5">
+                    <div class="result-right">
+                        <div class="mini-title">How to Read This Result</div>
 
-</div>
+                        <div class="side-card">
+                            <h5>Prediction Label</h5>
+                            <p>
+                                The system classifies the submitted content as either real or fake based on the trained machine learning model.
+                            </p>
+                        </div>
 
-</div>
+                        <div class="side-card">
+                            <h5>Confidence Value</h5>
+                            <p>
+                                This percentage shows how strongly the model leans toward the displayed prediction.
+                            </p>
+                        </div>
+
+                        <div class="side-card">
+                            <h5>Important Note</h5>
+                            <p>
+                                AI predictions are helpful indicators, but they should still be verified using trusted news sources.
+                            </p>
+                        </div>
+
+                        <div class="side-card mb-0">
+                            <h5>Next Step</h5>
+                            <p>
+                                You can test another article, open the dashboard, or review recent fake vs real analytics.
+                            </p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <script>
+        function toggleTheme() {
+            const html = document.documentElement;
+            const button = document.getElementById("themeButton");
+
+            if (html.getAttribute("data-theme") === "dark") {
+                html.setAttribute("data-theme", "light");
+                localStorage.setItem("theme", "light");
+                button.innerText = "Dark Mode";
+            } else {
+                html.setAttribute("data-theme", "dark");
+                localStorage.setItem("theme", "dark");
+                button.innerText = "Light Mode";
+            }
+        }
+
+        window.onload = function () {
+            const savedTheme = localStorage.getItem("theme") || "light";
+            const html = document.documentElement;
+            const button = document.getElementById("themeButton");
+
+            html.setAttribute("data-theme", savedTheme);
+            button.innerText = savedTheme === "dark" ? "Light Mode" : "Dark Mode";
+        };
+    </script>
 
 </body>
 </html>

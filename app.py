@@ -9,38 +9,41 @@ app = Flask(__name__)
 model = pickle.load(open("models/model.pkl", "rb"))
 vectorizer = pickle.load(open("models/vectorizer.pkl", "rb"))
 
+
 # Create database if not exists
-conn = sqlite3.connect("database/history.db")
-cursor = conn.cursor()
+def init_db():
+    conn = sqlite3.connect("database/history.db")
+    cursor = conn.cursor()
 
-cursor.execute("""
-CREATE TABLE IF NOT EXISTS predictions(
-id INTEGER PRIMARY KEY AUTOINCREMENT,
-news TEXT,
-result TEXT,
-confidence REAL,
-date TEXT
-)
-""")
+    cursor.execute("""
+    CREATE TABLE IF NOT EXISTS predictions(
+        id INTEGER PRIMARY KEY AUTOINCREMENT,
+        news TEXT,
+        result TEXT,
+        confidence REAL,
+        date TEXT
+    )
+    """)
 
-conn.commit()
-conn.close()
+    conn.commit()
+    conn.close()
+
+
+init_db()
 
 
 # HOME PAGE
 @app.route("/")
 def home():
-
     conn = sqlite3.connect("database/history.db")
     cursor = conn.cursor()
 
     cursor.execute("""
-    SELECT news,result,confidence,date
+    SELECT news, result, confidence, date
     FROM predictions
     ORDER BY id DESC
     LIMIT 5
     """)
-
     history = cursor.fetchall()
 
     conn.close()
@@ -51,31 +54,41 @@ def home():
 # PREDICT ROUTE
 @app.route("/predict", methods=["POST"])
 def predict():
+    news = request.form.get("news", "").strip()
 
-    news = request.form["news"]
+    if not news:
+        return render_template(
+            "result.html",
+            result="No Input",
+            confidence=0,
+            warning="⚠ Please enter some news text first."
+        )
 
     vect = vectorizer.transform([news])
 
-    prediction = model.predict(vect)
+    prediction_data = model.predict(vect)
     prob = model.predict_proba(vect)
-
     confidence = round(max(prob[0]) * 100, 2)
 
-    if prediction[0] == 0:
+    if prediction_data[0] == 0:
         result = "Fake News"
-        warning = "⚠ This news may be misleading."
+        warning = "⚠️ This news may be misleading or suspicious based on the current model prediction."
     else:
         result = "Real News"
-        warning = "✅ This news appears reliable."
+        warning = "✅ This news appears more reliable based on the current model prediction."
 
     conn = sqlite3.connect("database/history.db")
     cursor = conn.cursor()
 
     cursor.execute("""
-    INSERT INTO predictions (news,result,confidence,date)
-    VALUES (?,?,?,?)
-    """, (news, result, confidence,
-          datetime.now().strftime("%Y-%m-%d %H:%M")))
+    INSERT INTO predictions (news, result, confidence, date)
+    VALUES (?, ?, ?, ?)
+    """, (
+        news,
+        result,
+        confidence,
+        datetime.now().strftime("%Y-%m-%d %H:%M")
+    ))
 
     conn.commit()
     conn.close()
@@ -91,7 +104,6 @@ def predict():
 # DASHBOARD PAGE
 @app.route("/dashboard")
 def dashboard():
-
     conn = sqlite3.connect("database/history.db")
     cursor = conn.cursor()
 
@@ -100,8 +112,15 @@ def dashboard():
     FROM predictions
     GROUP BY result
     """)
-
     data = cursor.fetchall()
+
+    cursor.execute("""
+    SELECT news, result, confidence, date
+    FROM predictions
+    ORDER BY id DESC
+    LIMIT 5
+    """)
+    history = cursor.fetchall()
 
     conn.close()
 
@@ -111,13 +130,17 @@ def dashboard():
     for row in data:
         if row[0] == "Fake News":
             fake = row[1]
-        else:
+        elif row[0] == "Real News":
             real = row[1]
+
+    total = fake + real
 
     return render_template(
         "dashboard.html",
         fake=fake,
-        real=real
+        real=real,
+        total=total,
+        history=history
     )
 
 
