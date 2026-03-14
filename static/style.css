@@ -349,21 +349,23 @@ textarea {
 .login-page {
     padding: 34px 0;
     min-height: calc(100vh - var(--nav-height));
-    display: flex;
-    align-items: center;
 }
 
 .result-card,
 .dashboard-card,
 .login-card {
     width: 100%;
-    max-width: 980px;
+    max-width: 1180px;
     margin: 0 auto;
     background: var(--surface);
     border: 1px solid var(--border);
     border-radius: var(--radius-xl);
     box-shadow: var(--shadow);
     padding: 36px;
+}
+
+.login-card {
+    max-width: 500px;
 }
 
 .result-title,
@@ -469,7 +471,7 @@ textarea {
 
 .stats-grid {
     display: grid;
-    grid-template-columns: repeat(3, 1fr);
+    grid-template-columns: repeat(3, minmax(0, 1fr));
     gap: 18px;
     margin-bottom: 26px;
 }
@@ -500,12 +502,29 @@ textarea {
     border-radius: 22px;
     padding: 24px;
     box-shadow: var(--shadow-soft);
+    height: 100%;
+}
+
+.chart-wrap {
+    min-height: 380px;
+    display: flex;
+    flex-direction: column;
+}
+
+.chart-wrap canvas {
+    width: 100% !important;
+    height: 300px !important;
+    max-height: 300px !important;
 }
 
 .section-title {
     font-size: 1.28rem;
     font-weight: 800;
     margin-bottom: 16px;
+}
+
+.history-wrap {
+    overflow-x: auto;
 }
 
 .history-table {
@@ -530,6 +549,7 @@ textarea {
 .history-news {
     max-width: 420px;
     color: var(--text);
+    word-break: break-word;
 }
 
 .table-badge {
@@ -547,10 +567,6 @@ textarea {
 
 .table-fake {
     background: #dc2626;
-}
-
-.login-card {
-    max-width: 500px;
 }
 
 .form-group {
@@ -674,6 +690,16 @@ textarea {
 
     .stats-grid {
         grid-template-columns: 1fr;
+    }
+
+    .chart-wrap {
+        min-height: 320px;
+        padding: 18px;
+    }
+
+    .chart-wrap canvas {
+        height: 240px !important;
+        max-height: 240px !important;
     }
 
     .history-table,

@@ -5,266 +5,21 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>AI Fake News Detector</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
-
-    <style>
-        :root {
-            --bg: #f4f8ff;
-            --bg-soft: #eaf1ff;
-            --card: #ffffff;
-            --text: #0f172a;
-            --subtext: #64748b;
-            --nav: rgba(255, 255, 255, 0.96);
-            --border: #dbe4f0;
-            --shadow: 0 14px 35px rgba(15, 23, 42, 0.08);
-            --primary1: #0d6efd;
-            --primary2: #4d8dff;
-            --track: #e9eef5;
-        }
-
-        [data-theme="dark"] {
-            --bg: #0b1220;
-            --bg-soft: #111827;
-            --card: #111827;
-            --text: #f3f4f6;
-            --subtext: #cbd5e1;
-            --nav: rgba(17, 24, 39, 0.96);
-            --border: #273449;
-            --shadow: 0 14px 35px rgba(0, 0, 0, 0.30);
-            --track: #253246;
-        }
-
-        * {
-            box-sizing: border-box;
-        }
-
-        html, body {
-            margin: 0;
-            min-height: 100%;
-            font-family: Arial, sans-serif;
-            background: linear-gradient(135deg, var(--bg), var(--bg-soft));
-            color: var(--text);
-        }
-
-        .navbar-custom {
-            background: var(--nav);
-            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
-            padding: 12px 0;
-            border-bottom: 1px solid rgba(0, 0, 0, 0.04);
-        }
-
-        .brand-logo {
-            width: 40px;
-            height: 40px;
-            object-fit: contain;
-            margin-right: 10px;
-            border-radius: 50%;
-        }
-
-        .brand-text {
-            font-size: 1.15rem;
-            font-weight: 700;
-            color: var(--text);
-        }
-
-        .theme-btn,
-        .nav-btn {
-            border-radius: 12px;
-            padding: 9px 14px;
-            font-weight: 600;
-        }
-
-        .hero-section {
-            min-height: calc(100vh - 76px);
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            padding: 30px 14px;
-        }
-
-        .hero-card {
-            width: 100%;
-            max-width: 1150px;
-            background: var(--card);
-            border-radius: 28px;
-            box-shadow: var(--shadow);
-            border: 1px solid var(--border);
-            overflow: hidden;
-        }
-
-        .hero-left {
-            padding: 38px 34px;
-        }
-
-        .hero-right {
-            padding: 36px 28px;
-            background: linear-gradient(135deg, var(--primary1), var(--primary2));
-            color: white;
-            height: 100%;
-        }
-
-        .eyebrow {
-            display: inline-block;
-            padding: 8px 14px;
-            border-radius: 999px;
-            font-size: 0.88rem;
-            font-weight: 600;
-            background: rgba(13, 110, 253, 0.10);
-            color: var(--primary1);
-            margin-bottom: 16px;
-        }
-
-        .title {
-            font-size: 2.8rem;
-            font-weight: 800;
-            margin-bottom: 14px;
-            line-height: 1.1;
-        }
-
-        .subtitle {
-            color: var(--subtext);
-            font-size: 1.05rem;
-            line-height: 1.7;
-            margin-bottom: 28px;
-            max-width: 720px;
-        }
-
-        .news-form textarea {
-            width: 100%;
-            min-height: 180px;
-            border-radius: 18px;
-            border: 1px solid var(--border);
-            padding: 18px;
-            font-size: 1rem;
-            resize: vertical;
-            outline: none;
-            background: transparent;
-            color: var(--text);
-        }
-
-        .news-form textarea:focus {
-            border-color: var(--primary1);
-            box-shadow: 0 0 0 4px rgba(13, 110, 253, 0.10);
-        }
-
-        .form-actions {
-            display: flex;
-            gap: 12px;
-            flex-wrap: wrap;
-            margin-top: 16px;
-        }
-
-        .form-actions .btn {
-            border-radius: 14px;
-            padding: 12px 18px;
-            font-weight: 600;
-        }
-
-        .mini-title {
-            display: inline-block;
-            padding: 8px 14px;
-            border-radius: 999px;
-            font-size: 0.85rem;
-            font-weight: 600;
-            background: rgba(255, 255, 255, 0.16);
-            margin-bottom: 16px;
-        }
-
-        .side-card {
-            background: rgba(255, 255, 255, 0.12);
-            border: 1px solid rgba(255, 255, 255, 0.14);
-            border-radius: 18px;
-            padding: 18px;
-            margin-bottom: 14px;
-        }
-
-        .side-card h5 {
-            margin: 0 0 8px 0;
-            font-size: 1.05rem;
-            font-weight: 700;
-        }
-
-        .side-card p {
-            margin: 0;
-            font-size: 0.95rem;
-            line-height: 1.6;
-        }
-
-        .history-section {
-            margin-top: 26px;
-        }
-
-        .history-title {
-            font-size: 1.15rem;
-            font-weight: 700;
-            margin-bottom: 14px;
-        }
-
-        .history-card {
-            border: 1px solid var(--border);
-            border-radius: 18px;
-            overflow: hidden;
-            background: rgba(255, 255, 255, 0.45);
-        }
-
-        .empty-history {
-            padding: 24px;
-            text-align: center;
-            color: var(--subtext);
-        }
-
-        [data-theme="dark"] .history-card {
-            background: rgba(17, 24, 39, 0.55);
-        }
-
-        @media (max-width: 991px) {
-            .hero-left,
-            .hero-right {
-                padding: 26px 22px;
-            }
-
-            .title {
-                font-size: 2rem;
-            }
-        }
-
-        @media (max-width: 575px) {
-            .brand-text {
-                font-size: 1rem;
-            }
-
-            .theme-btn,
-            .nav-btn {
-                padding: 8px 10px;
-                font-size: 0.9rem;
-            }
-
-            .title {
-                font-size: 1.65rem;
-            }
-
-            .subtitle {
-                font-size: 0.96rem;
-            }
-
-            .news-form textarea {
-                min-height: 150px;
-            }
-        }
-    </style>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
 </head>
 <body>
 
     <nav class="navbar navbar-expand-lg navbar-custom">
         <div class="container">
-            <a class="navbar-brand d-flex align-items-center m-0" href="#">
+            <a class="navbar-brand d-flex align-items-center m-0" href="/">
                 <img src="https://cdn-icons-png.flaticon.com/512/3135/3135715.png" alt="Logo" class="brand-logo">
                 <span class="brand-text">AI Fake News Detector</span>
             </a>
 
             <div class="d-flex align-items-center gap-2">
-                <button class="btn btn-outline-secondary theme-btn" onclick="toggleTheme()" id="themeButton">Dark Mode</button>
-                <a href="#" class="btn btn-outline-primary nav-btn">Login</a>
-                <a href="#" class="btn btn-primary nav-btn">Dashboard</a>
+                <button class="btn btn-outline-secondary theme-btn" id="themeToggle" type="button">Dark Mode</button>
+                <a href="/login" class="btn btn-outline-primary nav-btn">Login</a>
+                <a href="/dashboard" class="btn btn-primary nav-btn">Dashboard</a>
             </div>
         </div>
     </nav>
@@ -277,15 +32,18 @@
                         <div class="eyebrow">AI-Powered Verification</div>
                         <h1 class="title">Detect misleading news in seconds</h1>
                         <p class="subtitle">
-                            Paste any headline, article, or news content below and view the frontend demo of an AI-based fake news detection system.
+                            Paste any headline, article, or news content below and check whether it is predicted as fake or real using AI.
                         </p>
 
-                        <form class="news-form" onsubmit="showDemoMessage(event)">
-                            <textarea name="news" placeholder="Paste your news article or headline here..." required></textarea>
+                        <form class="news-form" action="/predict" method="POST">
+                            <div class="textarea-wrap">
+                                <textarea id="newsInput" class="news-textarea" name="news" placeholder="Paste your news article or headline here..." required></textarea>
+                                <div class="text-counter" id="charCount">0 chars</div>
+                            </div>
 
                             <div class="form-actions">
                                 <button type="submit" class="btn btn-primary">Analyze News</button>
-                                <a href="#" class="btn btn-outline-secondary">View Dashboard</a>
+                                <a href="/dashboard" class="btn btn-outline-secondary">View Dashboard</a>
                             </div>
                         </form>
 
@@ -294,7 +52,7 @@
 
                             <div class="history-card">
                                 <div class="empty-history">
-                                    Prediction history is available in the full Flask version of the project.
+                                    Prediction history is available in the dashboard.
                                 </div>
                             </div>
                         </div>
@@ -329,7 +87,7 @@
                         <div class="side-card mb-0">
                             <h5>Clean Workflow</h5>
                             <p>
-                                Submit news, preview the interface, and explore the project structure easily.
+                                Submit news, view results, and explore the project structure easily.
                             </p>
                         </div>
                     </div>
@@ -338,36 +96,6 @@
         </div>
     </section>
 
-    <script>
-        function toggleTheme() {
-            const html = document.documentElement;
-            const button = document.getElementById("themeButton");
-
-            if (html.getAttribute("data-theme") === "dark") {
-                html.setAttribute("data-theme", "light");
-                localStorage.setItem("theme", "light");
-                button.innerText = "Dark Mode";
-            } else {
-                html.setAttribute("data-theme", "dark");
-                localStorage.setItem("theme", "dark");
-                button.innerText = "Light Mode";
-            }
-        }
-
-        function showDemoMessage(event) {
-            event.preventDefault();
-            alert("This GitHub Pages version is a frontend demo. Full fake news prediction works in the Flask project version.");
-        }
-
-        window.onload = function () {
-            const savedTheme = localStorage.getItem("theme") || "light";
-            const html = document.documentElement;
-            const button = document.getElementById("themeButton");
-
-            html.setAttribute("data-theme", savedTheme);
-            button.innerText = savedTheme === "dark" ? "Light Mode" : "Dark Mode";
-        };
-    </script>
-
+    <script src="{{ url_for('static', filename='script.js') }}"></script>
 </body>
 </html>
