@@ -1,0 +1,48 @@
+// Show loading when prediction starts
+
+document.addEventListener("DOMContentLoaded", function () {
+
+    const form = document.querySelector("form");
+
+    if(form){
+
+        form.addEventListener("submit", function(){
+
+            const button = document.querySelector("button");
+
+            button.innerHTML = "Analyzing...";
+            button.disabled = true;
+
+        });
+
+    }
+
+});
+
+
+
+// Character counter for textarea
+
+const textarea = document.querySelector("textarea");
+
+if(textarea){
+
+textarea.addEventListener("input", function(){
+
+    const length = textarea.value.length;
+
+    let counter = document.getElementById("charCounter");
+
+    if(!counter){
+
+        counter = document.createElement("small");
+        counter.id = "charCounter";
+        textarea.parentNode.appendChild(counter);
+
+    }
+
+    counter.innerText = "Characters: " + length;
+
+});
+
+}
